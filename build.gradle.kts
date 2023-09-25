@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
-val awsSdkVersion = "2.20.152"
+val awsSdkVersion = "2.20.153"
 
 plugins {
     id("org.springframework.boot") version "3.1.4"
