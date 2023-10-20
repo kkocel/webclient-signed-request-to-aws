@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 val awsSdkVersion = "2.21.4"
 
 plugins {
-    id("org.springframework.boot") version "3.1.4"
+    id("org.springframework.boot") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.3"
     val kotlinVersion = "1.9.10"
     kotlin("jvm") version kotlinVersion
