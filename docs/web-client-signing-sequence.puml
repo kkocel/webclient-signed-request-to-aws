@@ -1,0 +1,11 @@
+@startuml
+
+MessageSigningHttpConnector -> "Reactor Context": Store ""ClientHttpRequest"" in ""Context""
+
+BodyProvidingJsonEncoder -> "Reactor Context": Extract ""ClientHttpRequest"" from Context
+
+note over BodyProvidingJsonEncoder: Get Request body from ""DataBuffer""
+note over BodyProvidingJsonEncoder: Generate AWS signature by ""Aws4Signer""
+note over BodyProvidingJsonEncoder: Add signature to the ""ClientHttpRequest"" Headers
+
+@enduml
