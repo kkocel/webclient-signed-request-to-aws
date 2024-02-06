@@ -3,7 +3,7 @@
 Sample code showing how to sign HTTP requests coming to AWS in WebClient.
 
 High-level diagram showing how signing HTTP requests with body works:
-![your-UML-diagram-name](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/kkocel/webclient-signed-request-to-aws/main/docs/web-client-signing-sequence.puml)
+![High-level workflow](http://www.plantuml.com/plantuml/proxy?cache=no&fmt=svg&src=https://raw.githubusercontent.com/kkocel/webclient-signed-request-to-aws/main/docs/web-client-signing-sequence.puml)
 
 ## Caveats
 This works only for JSON requests. If you need to sign XML/protobuf requests, 
