@@ -15,8 +15,13 @@ you will need to provide a different implementation of `HttpMessageEncoder` and 
 Run the application with and call `/example` endpoint with a GET request.
 It will sign the POST request with `ExampleRequest` body and send it to `https://example.com`.
 
-In production, you need to switch awsCredentialsProvider from `AnonymousCredentialsProvider` to 
-`DefaultCredentialsProvider` and provide the credentials in the environment. In this sample you can
-run the sample with `prod` profile.
+### How to adjust for your project
 
-Also you need to specify AWS Region and AWS service name.
+1. In production, you need to switch [awsCredentialsProvider](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L28) from `AnonymousCredentialsProvider` to 
+`DefaultCredentialsProvider` and provide the credentials in the environment. In this sample you can
+run `prod` profile to enable `DefaultCredentialsProvider`.
+
+2. Set [AWS Region](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L27).
+3. Set [AWS service name](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L25).
+4. Set [base URL](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L20).
+5. Prepare your own [request body](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/ExampleRouter.kt#L12).
