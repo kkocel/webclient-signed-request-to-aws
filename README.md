@@ -8,7 +8,7 @@ High-level diagram showing how signing HTTP requests with body works:
 ## Caveats
 This works only for JSON requests. If you need to sign XML/protobuf requests, 
 you will need to provide a different implementation of `HttpMessageEncoder` and add it trough
-[CodecConfigurer](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/codec/CodecConfigurer.html)
+[CodecConfigurer](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/codec/CodecConfigurer.html).
 
 ## How to run
 
