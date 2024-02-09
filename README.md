@@ -2,11 +2,13 @@
 
 Sample code showing how to sign HTTP requests coming to AWS in WebClient.
 
+This code is based on https://github.com/rewolf/blog-hmac-auth-webclient and uses [Aws4Signer](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/signer/Aws4Signer.html) to sign requests.
+
 High-level diagram showing how signing HTTP requests with body works:
 ![High-level workflow](http://www.plantuml.com/plantuml/proxy?cache=no&fmt=svg&src=https://raw.githubusercontent.com/kkocel/webclient-signed-request-to-aws/main/docs/web-client-signing-sequence.puml)
 
 ## Caveats
-This sample works only for JSON requests. If you need to sign XML/protobuf requests, 
+This sample works only for JSON requests. If you need to sign requests with XML/protobuf content, 
 you will need to provide a different implementation of `HttpMessageEncoder` and add it through
 [CodecConfigurer](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/codec/CodecConfigurer.html).
 
@@ -18,7 +20,9 @@ It will sign the POST request with `ExampleRequest` body and send it to `https:/
 ### How to adjust for your project
 
 1. In production, you need to switch [awsCredentialsProvider](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L28) from `AnonymousCredentialsProvider` to 
-`DefaultCredentialsProvider` and provide the credentials in the environment. In this sample, you can
+`DefaultCredentialsProvider` and provide the credentials in the environment. When `AnonymousCredentialsProvider` is used,
+ `Aws4Signer` won't addd any headers to the request.
+2. In this sample, you can
 run `prod` profile to enable `DefaultCredentialsProvider`.
 
 2. Set [AWS Region](https://github.com/kkocel/webclient-signed-request-to-aws/blob/main/src/main/kotlin/com/sample/BeansInitializer.kt#L27).
