@@ -7,7 +7,7 @@ plugins {
     id("org.springframework.boot") version "3.3.2"
     id("io.spring.dependency-management") version "1.1.6"
     id("com.google.osdetector") version "1.7.3"
-    val kotlinVersion = "2.0.0"
+    val kotlinVersion = "2.0.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
 }
