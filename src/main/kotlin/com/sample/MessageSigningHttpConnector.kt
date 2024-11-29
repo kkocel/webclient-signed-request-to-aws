@@ -12,12 +12,13 @@ class MessageSigningHttpConnector : ReactorClientHttpConnector() {
         method: HttpMethod,
         uri: URI,
         requestCallback: Function<in ClientHttpRequest, Mono<Void>>,
-    ): Mono<ClientHttpResponse> {
-        return super.connect(
+    ): Mono<ClientHttpResponse> =
+        super.connect(
             method,
             uri,
         ) { incomingRequest: ClientHttpRequest ->
-            requestCallback.apply(incomingRequest)
+            requestCallback
+                .apply(incomingRequest)
                 .contextWrite(
                     Context.of(
                         REQUEST_CONTEXT_KEY,
@@ -25,7 +26,6 @@ class MessageSigningHttpConnector : ReactorClientHttpConnector() {
                     ),
                 )
         }
-    }
 
     companion object {
         const val REQUEST_CONTEXT_KEY = "REQUEST_CONTEXT_KEY"

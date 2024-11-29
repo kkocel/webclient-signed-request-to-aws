@@ -17,29 +17,31 @@ import reactor.util.context.ContextView
  *
  * @author rewolf
  */
-class BodyProvidingJsonEncoder(private val signer: WebClientAwsSigner) : Jackson2JsonEncoder() {
+class BodyProvidingJsonEncoder(
+    private val signer: WebClientAwsSigner,
+) : Jackson2JsonEncoder() {
     override fun encode(
         inputStream: Publisher<*>,
         bufferFactory: DataBufferFactory,
         elementType: ResolvableType,
         mimeType: MimeType?,
         hints: MutableMap<String, Any>?,
-    ): Flux<DataBuffer> {
-        return super.encode(inputStream, bufferFactory, elementType, mimeType, hints)
+    ): Flux<DataBuffer> =
+        super
+            .encode(inputStream, bufferFactory, elementType, mimeType, hints)
             .flatMap { db: DataBuffer ->
-                Mono.deferContextual { data: ContextView ->
-                    Mono.just(
-                        data,
-                    )
-                }
-                    .map { sc: ContextView ->
+                Mono
+                    .deferContextual { data: ContextView ->
+                        Mono.just(
+                            data,
+                        )
+                    }.map { sc: ContextView ->
                         val clientHttpRequest =
                             sc.get<ClientHttpRequest>(MessageSigningHttpConnector.REQUEST_CONTEXT_KEY)
                         signer.signRequestAndInjectHeader(clientHttpRequest, extractBytes(db))
                         db
                     }
             }
-    }
 
     /**
      * Extracts bytes from the DataBuffer and resets the buffer so that it is ready to be re-read by the regular

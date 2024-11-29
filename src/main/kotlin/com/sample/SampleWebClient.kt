@@ -19,7 +19,7 @@ import reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_ACQUIRE_TIMEOUT
 import reactor.netty.resources.ConnectionProvider.DEFAULT_POOL_MAX_CONNECTIONS
 import reactor.netty.transport.logging.AdvancedByteBufFormat
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider
-import software.amazon.awssdk.auth.signer.Aws4Signer
+import software.amazon.awssdk.http.auth.aws.signer.AwsV4HttpSigner
 import software.amazon.awssdk.regions.Region
 import java.time.Duration.ofMillis
 import java.time.Duration.ofSeconds
@@ -43,29 +43,32 @@ fun webClient(
     webClientBuilder
         .clientConnector(
             ReactorClientHttpConnector(
-                HttpClient.create(
-                    ConnectionProvider.builder(connectionProviderName)
-                        .maxIdleTime(ofSeconds(idleTimeoutSeconds))
-                        .maxConnections(DEFAULT_POOL_MAX_CONNECTIONS)
-                        .pendingAcquireMaxCount(pendingMaxCount)
-                        .pendingAcquireTimeout(ofMillis(pendingAcquireTimeout))
-                        .build(),
-                ).followRedirect(true).apply {
-                    if (verboseLogging) {
-                        wiretap(
-                            "reactor.netty.http.client.HttpClient",
-                            LogLevel.DEBUG,
-                            AdvancedByteBufFormat.TEXTUAL,
-                        )
-                    }
-                }.responseTimeout(ofSeconds(connectTimeout))
+                HttpClient
+                    .create(
+                        ConnectionProvider
+                            .builder(connectionProviderName)
+                            .maxIdleTime(ofSeconds(idleTimeoutSeconds))
+                            .maxConnections(DEFAULT_POOL_MAX_CONNECTIONS)
+                            .pendingAcquireMaxCount(pendingMaxCount)
+                            .pendingAcquireTimeout(ofMillis(pendingAcquireTimeout))
+                            .build(),
+                    ).followRedirect(true)
+                    .apply {
+                        if (verboseLogging) {
+                            wiretap(
+                                "reactor.netty.http.client.HttpClient",
+                                LogLevel.DEBUG,
+                                AdvancedByteBufFormat.TEXTUAL,
+                            )
+                        }
+                    }.responseTimeout(ofSeconds(connectTimeout))
                     .doOnConnected { connection ->
-                        connection.addHandlerLast(ReadTimeoutHandler(readTimeout.toInt()))
+                        connection
+                            .addHandlerLast(ReadTimeoutHandler(readTimeout.toInt()))
                             .addHandlerLast(WriteTimeoutHandler(writeTimeout))
                     },
             ),
-        )
-        .exchangeFunction(
+        ).exchangeFunction(
             ExchangeFunctions.create(
                 MessageSigningHttpConnector(),
                 ExchangeStrategies
@@ -74,7 +77,7 @@ fun webClient(
                         clientDefaultCodecsConfigurer.defaultCodecs().jackson2JsonEncoder(
                             BodyProvidingJsonEncoder(
                                 WebClientAwsSigner(
-                                    signer = Aws4Signer.create(),
+                                    signer = AwsV4HttpSigner.create(),
                                     awsCredentialsProvider = awsCredentialsProvider,
                                     serviceName = serviceName,
                                     region = region,
@@ -87,17 +90,14 @@ fun webClient(
                                 MediaType.APPLICATION_JSON,
                             ),
                         )
-                    }
-                    .build(),
+                    }.build(),
             ),
-        )
-        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        ).defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         .apply {
             if (baseUrl != null) {
                 it.baseUrl(baseUrl)
             }
-        }
-        .build()
+        }.build()
 
 const val AWS_TIMEOUT = 340L
 
